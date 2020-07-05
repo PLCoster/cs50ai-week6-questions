@@ -77,5 +77,5 @@ $pip3 install -r requirements.txt
 
 Run the script with a corpus of .txt documents to search for your query:
 
-python3 questions.py corpus_directory
+$python3 questions.py corpus_directory
 
