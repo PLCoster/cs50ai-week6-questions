@@ -2,6 +2,7 @@ import nltk
 import sys
 import os
 import string
+import math
 
 FILE_MATCHES = 1
 SENTENCE_MATCHES = 1
@@ -104,7 +105,29 @@ def compute_idfs(documents):
     Any word that appears in at least one of the documents should be in the
     resulting dictionary.
     """
-    raise NotImplementedError
+
+    # Number of documents for idf:
+    num_docs = len(documents)
+
+    # Dictionary to count number of docs containing each word:
+    docs_with_word = dict()
+
+    # Iterate through documents looking at unique words in each:
+    for document in documents:
+        doc_words = set(tokenize(documents[document]))
+
+        for word in doc_words:
+            if word not in docs_with_word:
+                docs_with_word[word] = 1
+            else:
+                docs_with_word[word] += 1
+
+    # Calculate idfs for each word:
+    word_idfs = dict()
+    for word in docs_with_word:
+        word_idfs[word] = math.log((num_docs / docs_with_word[word]))
+
+    return word_idfs
 
 
 def top_files(query, files, idfs, n):
