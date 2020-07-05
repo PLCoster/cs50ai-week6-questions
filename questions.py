@@ -114,7 +114,7 @@ def compute_idfs(documents):
 
     # Iterate through documents looking at unique words in each:
     for document in documents:
-        doc_words = set(tokenize(documents[document]))
+        doc_words = set(documents[document])
 
         for word in doc_words:
             if word not in docs_with_word:
@@ -137,7 +137,21 @@ def top_files(query, files, idfs, n):
     to their IDF values), return a list of the filenames of the the `n` top
     files that match the query, ranked according to tf-idf.
     """
-    raise NotImplementedError
+
+    # Dictionary to hold scores for files
+    file_scores = {filename:0 for filename in files}
+
+    # Iterate through words in query:
+    for word in query:
+        # Limit to words in the idf dictionary:
+        if word in idfs:
+            # Iterate through the corpus, update each texts tf-idf:
+            for filename in files:
+              tf = files[filename].count(word)
+              tf-idf = tf * idfs[word]
+              file_scores[filename] += tf-idf
+
+    return file_scores
 
 
 def top_sentences(query, sentences, idfs, n):
