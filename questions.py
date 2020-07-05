@@ -5,7 +5,7 @@ import string
 import math
 
 FILE_MATCHES = 1
-SENTENCE_MATCHES = 10
+SENTENCE_MATCHES = 1
 
 
 def main():
