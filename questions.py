@@ -5,7 +5,7 @@ import string
 import math
 
 FILE_MATCHES = 1
-SENTENCE_MATCHES = 1
+SENTENCE_MATCHES = 10
 
 
 def main():
@@ -148,10 +148,13 @@ def top_files(query, files, idfs, n):
             # Iterate through the corpus, update each texts tf-idf:
             for filename in files:
               tf = files[filename].count(word)
-              tf-idf = tf * idfs[word]
-              file_scores[filename] += tf-idf
+              tf_idf = tf * idfs[word]
+              file_scores[filename] += tf_idf
 
-    return file_scores
+    sorted_files = sorted([filename for filename in files], key = lambda x : file_scores[x], reverse=True)
+
+    # Return best n files
+    return sorted_files[:n]
 
 
 def top_sentences(query, sentences, idfs, n):
@@ -162,7 +165,29 @@ def top_sentences(query, sentences, idfs, n):
     the query, ranked according to idf. If there are ties, preference should
     be given to sentences that have a higher query term density.
     """
-    raise NotImplementedError
+
+    # Dict to score sentences:
+    sentence_score = {sentence:{'idf_score': 0, 'length':0, 'query_words':0, 'qtd_score':0} for sentence in sentences}
+
+    # Iterate through sentences:
+    for sentence in sentences:
+        s = sentence_score[sentence]
+        s['length'] = len(nltk.word_tokenize(sentence))
+        # Iterate through query words:
+        for word in query:
+            # If query word is in sentence word list, update its score
+            if word in sentences[sentence]:
+                s['idf_score'] += idfs[word]
+                s['query_words'] += sentences[sentence].count(word)
+
+        # Calculate query term density for each sentence:
+        s['qtd_score'] = s['query_words'] / s['length']
+
+    # Rank sentences by score and return n sentence
+    sorted_sentences = sorted([sentence for sentence in sentences], key= lambda x: (sentence_score[x]['idf_score'], sentence_score[x]['qtd_score']), reverse=True)
+
+    # Return n entries for sorted sentence:
+    return sorted_sentences[:n]
 
 
 if __name__ == "__main__":
